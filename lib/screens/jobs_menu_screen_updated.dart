@@ -1,0 +1,486 @@
+import 'package:flutter/material.dart';
+import 'messages_screen.dart'; // [NEW] Import Messages Screen
+import 'job_page_screen.dart'; // [NEW] Import Job Page Screen
+
+// [NEW] Jobs Menu Screen
+class JobsMenuScreenUpdated extends StatefulWidget {
+  const JobsMenuScreenUpdated({super.key});
+
+  @override
+  State<JobsMenuScreenUpdated> createState() => _JobsMenuScreenUpdatedState();
+}
+
+class _JobsMenuScreenUpdatedState extends State<JobsMenuScreenUpdated> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Jobs Menu'),
+        backgroundColor: Colors.deepPurple.shade50,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Active Jobs Section
+                _buildSectionHeader('Active Jobs', Icons.work),
+                const SizedBox(height: 12),
+                _buildActiveJobsList(),
+                
+                const SizedBox(height: 24),
+                
+                // Past Jobs Section
+                _buildSectionHeader('Past Jobs', Icons.history),
+                const SizedBox(height: 12),
+                _buildPastJobsList(),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionHeader(String title, IconData icon) {
+    return Row(
+      children: [
+        Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+            color: Colors.deepPurple.shade100,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Icon(
+            icon,
+            color: Colors.deepPurple,
+          ),
+        ),
+        const SizedBox(width: 12),
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActiveJobsList() {
+    // Demo data for active jobs
+    final List<Map<String, dynamic>> activeJobs = [
+      {
+        'petName': 'Max',
+        'petType': 'Dog',
+        'ownerName': 'John Smith',
+        'days': 3,
+        'imageUrl': 'assets/images/dog1.jpg',
+      },
+      {
+        'petName': 'Whiskers',
+        'petType': 'Cat',
+        'ownerName': 'Sarah Johnson',
+        'days': 1,
+        'imageUrl': 'assets/images/cat1.jpg',
+      },
+    ];
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: activeJobs.length,
+      itemBuilder: (context, index) {
+        final job = activeJobs[index];
+        return _buildActiveJobCard(
+          context,
+          petName: job['petName'],
+          petType: job['petType'],
+          ownerName: job['ownerName'],
+          days: job['days'],
+          imageUrl: job['imageUrl'],
+        );
+      },
+    );
+  }
+
+  Widget _buildPastJobsList() {
+    // Demo data for past jobs
+    final List<Map<String, dynamic>> pastJobs = [
+      {
+        'petName': 'Buddy',
+        'petType': 'Dog',
+        'ownerName': 'Michael Brown',
+        'endDate': '10 Jun 2025',
+        'imageUrl': 'assets/images/dog2.jpg',
+      },
+      {
+        'petName': 'Luna',
+        'petType': 'Cat',
+        'ownerName': 'Emily Davis',
+        'endDate': '5 Jun 2025',
+        'imageUrl': 'assets/images/cat2.jpg',
+      },
+      {
+        'petName': 'Charlie',
+        'petType': 'Dog',
+        'ownerName': 'Daniel Wilson',
+        'endDate': '1 Jun 2025',
+        'imageUrl': 'assets/images/dog3.jpg',
+      },
+      {
+        'petName': 'Milo',
+        'petType': 'Cat',
+        'ownerName': 'Olivia Martinez',
+        'endDate': '28 May 2025',
+        'imageUrl': 'assets/images/cat3.jpg',
+      },
+      {
+        'petName': 'Rocky',
+        'petType': 'Dog',
+        'ownerName': 'James Taylor',
+        'endDate': '20 May 2025',
+        'imageUrl': 'assets/images/dog4.jpg',
+      },
+    ];
+
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: pastJobs.length,
+      itemBuilder: (context, index) {
+        final job = pastJobs[index];
+        return _buildPastJobCard(
+          context,
+          petName: job['petName'],
+          petType: job['petType'],
+          ownerName: job['ownerName'],
+          endDate: job['endDate'],
+          imageUrl: job['imageUrl'],
+        );
+      },
+    );
+  }
+
+  Widget _buildActiveJobCard(
+    BuildContext context, {
+    required String petName,
+    required String petType,
+    required String ownerName,
+    required int days,
+    required String imageUrl,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 3,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => JobPageScreen(
+                jobId: 1, // Using a demo jobId
+                petName: petName,
+              ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pet image
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade300,
+                      ),
+                      child: Image.asset(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            petType == 'Dog' ? Icons.pets : Icons.catching_pokemon,
+                            size: 30,
+                            color: Colors.grey.shade700,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Job info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              petName,
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.green.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Day $days',
+                                style: TextStyle(
+                                  color: Colors.green.shade800,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '$petType • $ownerName',
+                          style: TextStyle(
+                            color: Colors.grey.shade700,
+                            fontSize: 14,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Scheduled visits: 2 times daily',
+                          style: TextStyle(
+                            color: Colors.grey.shade800,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JobPageScreen(
+                            jobId: 1, // Using a demo jobId
+                            petName: petName,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('View Details'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.deepPurple.shade50,
+                      foregroundColor: Colors.deepPurple,
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      // Navigate to Messages Screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MessagesScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.message),
+                    label: const Text('Message Owner'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPastJobCard(
+    BuildContext context, {
+    required String petName,
+    required String petType,
+    required String ownerName,
+    required String endDate,
+    required String imageUrl,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      elevation: 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      color: Colors.grey.shade50,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(12),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => JobPageScreen(
+                jobId: 2, // Using a demo jobId
+                petName: petName,
+              ),
+            ),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Column(
+            children: [
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Pet image (desaturated for past jobs)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: ColorFiltered(
+                      colorFilter: const ColorFilter.matrix([
+                        0.5, 0.5, 0.5, 0, 0,
+                        0.5, 0.5, 0.5, 0, 0,
+                        0.5, 0.5, 0.5, 0, 0,
+                        0, 0, 0, 1, 0,
+                      ]),
+                      child: Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade300,
+                        ),
+                        child: Image.asset(
+                          imageUrl,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Icon(
+                              petType == 'Dog' ? Icons.pets : Icons.catching_pokemon,
+                              size: 30,
+                              color: Colors.grey.shade500,
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  // Job info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              petName,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey.shade800,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade200,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                'Completed: $endDate',
+                                style: TextStyle(
+                                  color: Colors.grey.shade700,
+                                  fontSize: 11,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Text(
+                          '$petType • $ownerName',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => JobPageScreen(
+                            jobId: 2, // Using a demo jobId
+                            petName: petName,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.visibility),
+                    label: const Text('View Details'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.grey.shade200,
+                      foregroundColor: Colors.grey.shade700,
+                    ),
+                  ),
+                  TextButton.icon(
+                    onPressed: () {
+                      // Navigate to Messages Screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MessagesScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.message),
+                    label: const Text('Message Owner'),
+                    style: TextButton.styleFrom(
+                      foregroundColor: Colors.grey.shade700,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
