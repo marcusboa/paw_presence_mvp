@@ -1,40 +1,52 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
 # Netlify build script for Flutter Web
-# Installs Flutter SDK in the build environment and builds the app
+echo "==> Starting Flutter Web build process"
 
-FLUTTER_VERSION="3.22.2"
+# Set Flutter version
+FLUTTER_VERSION="3.24.3"
 FLUTTER_CHANNEL="stable"
 
 echo "==> Installing Flutter ${FLUTTER_VERSION}-${FLUTTER_CHANNEL}"
-mkdir -p "$HOME"
+
+# Create flutter directory in home
 cd "$HOME"
-# Download Flutter SDK (Linux x64)
+echo "Working directory: $(pwd)"
+
+# Download and extract Flutter
+echo "==> Downloading Flutter SDK..."
 curl -L "https://storage.googleapis.com/flutter_infra_release/releases/${FLUTTER_CHANNEL}/linux/flutter_linux_${FLUTTER_VERSION}-${FLUTTER_CHANNEL}.tar.xz" -o flutter.tar.xz
-mkdir -p "$HOME/flutter-sdk"
-tar -xJf flutter.tar.xz -C "$HOME"
-rm -f flutter.tar.xz
+
+echo "==> Extracting Flutter SDK..."
+tar -xf flutter.tar.xz
+rm flutter.tar.xz
 
 # Add Flutter to PATH
 export PATH="$HOME/flutter/bin:$PATH"
+echo "Flutter path: $HOME/flutter/bin"
 
-# Enable web support and fetch dependencies
-echo "==> Flutter version"
+# Verify Flutter installation
+echo "==> Verifying Flutter installation"
 flutter --version
 
-echo "==> Enabling web support"
-flutter config --enable-web
+# Navigate back to project directory
+echo "==> Navigating to project directory"
+cd "$PWD"
+echo "Project directory: $(pwd)"
 
-# Workaround for analytics prompts in CI
-echo "==> Disabling analytics"
-flutter --disable-analytics || true
+# Configure Flutter for web and CI
+echo "==> Configuring Flutter"
+flutter config --enable-web --no-analytics
 
-echo "==> Pub get"
-cd "$NETLIFY_BUILD_BASE/repo" || cd "$BITBUCKET_CLONE_DIR" || cd "$REPOSITORY_ROOT" || cd "$PWD"
+# Get dependencies
+echo "==> Getting Flutter dependencies"
 flutter pub get
 
-echo "==> Building web (release)"
-flutter build web --release
+# Build for web
+echo "==> Building Flutter web app"
+flutter build web --release --web-renderer canvaskit
 
-echo "==> Build complete. Output at build/web"
+echo "==> Build completed successfully!"
+echo "Output directory contents:"
+ls -la build/web/ || echo "build/web directory not found"
