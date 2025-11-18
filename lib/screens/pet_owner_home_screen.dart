@@ -7,6 +7,7 @@ import 'messages_screen.dart';
 import 'pets_menu_screen.dart';
 import 'profile_screen.dart';
 import 'job_creation_screen.dart';
+import 'pet_owner_job_details_screen.dart';
 
 /// Enhanced Pet Owner Home Screen with modern UI, loading states, and realistic demo data
 class PetOwnerHomeScreen extends StatefulWidget {
@@ -958,44 +959,11 @@ class _PetOwnerHomeScreenState extends State<PetOwnerHomeScreen> with TickerProv
   void _showBookingDetails(Map<String, dynamic> booking) {
     final pet = PetOwnerDemoDataService.getPetById(booking['petId']);
     final sitter = PetOwnerDemoDataService.getSitterById(booking['sitterId']);
-    
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('${booking['serviceType']} Details'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Pet: ${pet?['name']}'),
-            Text('Sitter: ${sitter?['name']}'),
-            Text('Status: ${booking['status']}'),
-            Text('Duration: ${booking['duration']}'),
-            Text('Cost: \$${booking['totalCost']}'),
-            if (booking['specialInstructions'].isNotEmpty) ...[
-              const SizedBox(height: 8),
-              Text('Instructions: ${booking['specialInstructions']}'),
-            ],
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Close'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Opening detailed booking view...'),
-                  behavior: SnackBarBehavior.floating,
-                ),
-              );
-            },
-            child: const Text('View Details'),
-          ),
-        ],
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PetOwnerJobDetailsScreen(booking: booking),
       ),
     );
   }
